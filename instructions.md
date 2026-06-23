@@ -7,13 +7,13 @@
 
 ## What you get on StartOS
 
-A private place to record and view your own (and your family's) location history:
+A private location backbone for you and your household:
 
-- A **Web UI** — the OwnTracks map and dashboard, showing every device that has reported in.
-- An **MQTT broker** with a **separate account for each person or device**, so everyone publishes under their own login.
+- A **private MQTT broker** with a **separate account for each person or device**, so everyone publishes under their own login.
 - **Friends** — you decide, per person, whose locations show up in each person's phone app.
+- The **Recorder** quietly archives all location history on your server (included in your backups).
 
-All data stays on your server.
+You view live locations **in the OwnTracks phone apps** themselves — there is no web map (see [Viewing your data](#viewing-your-data)). All data stays on your server.
 
 ## Getting set up
 
@@ -29,7 +29,7 @@ You create one MQTT account per person (or device), then point each phone at the
    - **Username** / **Password**: that person's account from step 1
    - **Device ID**: a short name for the phone (e.g. `phone`)
    - **Username (identification)**: **must match the MQTT username** above — the broker only lets each account publish under its own name.
-5. Save and let the app publish a location. Open the **Web UI** — the device appears on the map.
+5. Save and let the app publish a location.
 
 ## Choosing who sees whom (Friends)
 
@@ -39,7 +39,7 @@ By default a new user sees only their own location in their app. To let people s
 2. For each user, check the other users whose locations should appear in that user's phone app.
 3. Save. The broker restarts briefly to apply the change.
 
-Friends are one-directional — if you want Jane and John to see each other, grant John to Jane *and* Jane to John. Everyone always appears on the server's **Web UI** map regardless of Friends.
+Friends are one-directional — if you want Jane and John to see each other, grant John to Jane *and* Jane to John.
 
 ## Managing accounts
 
@@ -47,7 +47,12 @@ Friends are one-directional — if you want Jane and John to see each other, gra
 - **Reset User Password** — issue a new password for a user (update their app afterward).
 - **Remove MQTT User** — delete an account; they're also dropped from everyone's friends.
 
+## Viewing your data
+
+Live locations and friends appear **in the OwnTracks app** on each phone. There is intentionally no web map: the Recorder's data API cannot enforce per-person visibility, so a shared web page would show everyone's location to anyone who opened it. Your full location history is archived by the Recorder and travels with your StartOS **backups**.
+
 ## Limitations
 
 - MQTT uses TLS on port 8883. On a LAN or Tor address the certificate is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted certificate).
 - Adding/removing users or changing friends restarts the broker, briefly disconnecting connected apps.
+- There is no web interface; recorded history is retrieved via backups.

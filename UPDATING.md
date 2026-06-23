@@ -5,7 +5,6 @@ This package wraps three upstream images, each pinned in `startos/manifest/index
 | Image key   | Pin                         | Upstream                                              |
 | ----------- | --------------------------- | ---------------------------------------------------- |
 | `recorder`  | `owntracks/recorder:<ver>`  | [owntracks/recorder](https://github.com/owntracks/recorder) |
-| `frontend`  | `owntracks/frontend:<ver>`  | [owntracks/frontend](https://github.com/owntracks/frontend) |
 | `mosquitto` | `eclipse-mosquitto:<ver>`   | [eclipse-mosquitto/mosquitto](https://github.com/eclipse-mosquitto/mosquitto) |
 
 The Recorder is the primary upstream and drives the package `version` in `startos/versions/current.ts`.
@@ -14,7 +13,6 @@ The Recorder is the primary upstream and drives the package `version` in `starto
 
 ```sh
 gh release view -R owntracks/recorder --json tagName -q .tagName
-gh release view -R owntracks/frontend --json tagName -q .tagName
 # Mosquitto: stick to the latest 2.0.x tag on Docker Hub (library/eclipse-mosquitto)
 ```
 
