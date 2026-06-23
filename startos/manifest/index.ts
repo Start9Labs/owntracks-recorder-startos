@@ -4,7 +4,7 @@ import { long, short } from './i18n'
 export const manifest = setupManifest({
   id: 'owntracks-recorder',
   title: 'OwnTracks Recorder',
-  license: 'gpl',
+  license: 'GPL-2.0-or-later',
   packageRepo: 'https://github.com/Start9Labs/owntracks-recorder-startos',
   upstreamRepo: 'https://github.com/owntracks/recorder',
   marketingUrl: 'https://owntracks.org/',
