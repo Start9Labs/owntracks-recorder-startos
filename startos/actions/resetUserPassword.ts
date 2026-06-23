@@ -21,7 +21,9 @@ export const resetUserPassword = sdk.Action.withInput(
       ),
       allowedStatuses: 'any',
       group: null,
-      visibility: Object.keys(users).length ? 'enabled' : 'hidden',
+      visibility: Object.keys(users).length
+        ? 'enabled'
+        : { disabled: i18n('No MQTT users exist yet.') },
     }
   },
 

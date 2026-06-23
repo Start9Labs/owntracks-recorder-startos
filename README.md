@@ -125,7 +125,7 @@ The MQTT bind is raw TCP internally (mosquitto on `1883`); StartOS adds TLS via 
 | Admin Web Map Credentials    | none                         | Show the admin username/password for the web map           |
 | Reset Admin Web Map Password | none                         | Generate a new admin password for the web map              |
 
-MQTT actions that select an existing user are `visibility: 'hidden'` until at least one user exists (Manage Friends until at least two).
+MQTT actions that select an existing user are **disabled** (visible, with an explanatory reason) until at least one user exists (Manage Friends until at least two).
 
 ---
 

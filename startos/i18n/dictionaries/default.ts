@@ -63,6 +63,10 @@ const dict = {
   'Admin Web Map Login': 38,
   'Use these credentials to sign in to the admin web map. They are separate from your MQTT user accounts.': 39,
   'Save the admin password for the web map (separate from MQTT accounts).': 40,
+
+  // disabled-action reasons
+  'No MQTT users exist yet.': 41,
+  'Add at least two users to manage friends.': 42,
 } as const
 
 /**

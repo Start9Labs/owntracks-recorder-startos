@@ -17,7 +17,10 @@ export const manageFriends = sdk.Action.withInput(
       warning: null,
       allowedStatuses: 'any',
       group: null,
-      visibility: Object.keys(users).length > 1 ? 'enabled' : 'hidden',
+      visibility:
+        Object.keys(users).length > 1
+          ? 'enabled'
+          : { disabled: i18n('Add at least two users to manage friends.') },
     }
   },
 

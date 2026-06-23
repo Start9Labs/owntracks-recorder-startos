@@ -18,7 +18,9 @@ export const userCredentials = sdk.Action.withInput(
       warning: null,
       allowedStatuses: 'any',
       group: null,
-      visibility: Object.keys(users).length ? 'enabled' : 'hidden',
+      visibility: Object.keys(users).length
+        ? 'enabled'
+        : { disabled: i18n('No MQTT users exist yet.') },
     }
   },
 

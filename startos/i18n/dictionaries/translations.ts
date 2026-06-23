@@ -43,6 +43,8 @@ export default {
     38: 'Inicio de sesión del mapa web de administrador',
     39: 'Usa estas credenciales para iniciar sesión en el mapa web de administrador. Son independientes de tus cuentas de usuario MQTT.',
     40: 'Guarda la contraseña de administrador del mapa web (independiente de las cuentas MQTT).',
+    41: 'Aún no existe ningún usuario MQTT.',
+    42: 'Añade al menos dos usuarios para gestionar amigos.',
   },
   de_DE: {
     0: 'OwnTracks Recorder wird gestartet',
@@ -86,6 +88,8 @@ export default {
     38: 'Anmeldung an der Admin-Webkarte',
     39: 'Verwende diese Anmeldedaten, um dich an der Admin-Webkarte anzumelden. Sie sind von deinen MQTT-Benutzerkonten getrennt.',
     40: 'Speichere das Admin-Passwort für die Webkarte (getrennt von den MQTT-Konten).',
+    41: 'Es existieren noch keine MQTT-Benutzer.',
+    42: 'Füge mindestens zwei Benutzer hinzu, um Freunde zu verwalten.',
   },
   pl_PL: {
     0: 'Uruchamianie OwnTracks Recorder',
@@ -129,6 +133,8 @@ export default {
     38: 'Logowanie do mapy webowej administratora',
     39: 'Użyj tych danych, aby zalogować się do mapy webowej administratora. Są niezależne od kont użytkowników MQTT.',
     40: 'Zapisz hasło administratora do mapy webowej (niezależne od kont MQTT).',
+    41: 'Nie ma jeszcze żadnych użytkowników MQTT.',
+    42: 'Dodaj co najmniej dwóch użytkowników, aby zarządzać znajomymi.',
   },
   fr_FR: {
     0: 'Démarrage de OwnTracks Recorder',
@@ -172,5 +178,7 @@ export default {
     38: 'Connexion à la carte web admin',
     39: 'Utilisez ces identifiants pour vous connecter à la carte web admin. Ils sont distincts de vos comptes utilisateur MQTT.',
     40: 'Enregistrez le mot de passe admin de la carte web (distinct des comptes MQTT).',
+    41: "Aucun utilisateur MQTT n'existe encore.",
+    42: 'Ajoutez au moins deux utilisateurs pour gérer les amis.',
   },
 } satisfies Record<string, LangDict>
