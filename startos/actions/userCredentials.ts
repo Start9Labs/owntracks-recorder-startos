@@ -44,6 +44,13 @@ export const userCredentials = sdk.Action.withInput(
     const users = (await storeJson.read((s) => s.users).once()) || {}
     const user = users[input.user]
     if (!user) throw new Error(`No such user: ${input.user}`)
-    return credentialsResult(input.user, user.password)
+    return credentialsResult(
+      i18n('OwnTracks MQTT Credentials'),
+      i18n(
+        'Enter these in the OwnTracks app under Settings → Connection, along with your server address and port.',
+      ),
+      input.user,
+      user.password,
+    )
   },
 )

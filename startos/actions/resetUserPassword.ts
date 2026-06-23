@@ -52,6 +52,13 @@ export const resetUserPassword = sdk.Action.withInput(
     await storeJson.merge(effects, {
       users: { ...users, [input.user]: { ...user, password } },
     })
-    return credentialsResult(input.user, password)
+    return credentialsResult(
+      i18n('OwnTracks MQTT Credentials'),
+      i18n(
+        'Enter these in the OwnTracks app under Settings → Connection, along with your server address and port.',
+      ),
+      input.user,
+      password,
+    )
   },
 )

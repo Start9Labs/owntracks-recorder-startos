@@ -1,12 +1,14 @@
 import { utils } from '@start9labs/start-sdk'
 import { Store } from './fileModels/store.json'
 
+export const uiPort = 80
 export const recorderHttpPort = 8083
 export const mqttPort = 1883
 export const mqttsPort = 8883
 
 export const defaultMqttUsername = 'owntracks'
 export const recorderMqttUsername = 'recorder'
+export const uiUsername = 'admin'
 
 export const mosquittoConfigDir = '/mosquitto/config'
 export const mosquittoPasswdFile = `${mosquittoConfigDir}/passwd`

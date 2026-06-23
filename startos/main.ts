@@ -12,6 +12,7 @@ import {
   mqttPort,
   recorderHttpPort,
   recorderMqttUsername,
+  uiPort,
 } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
@@ -45,6 +46,13 @@ export const main = sdk.setupMain(async ({ effects }) => {
       readonly: false,
     }),
     'recorder-sub',
+  )
+
+  const frontendSub = await sdk.SubContainer.of(
+    effects,
+    { imageId: 'frontend' },
+    sdk.Mounts.of(),
+    'frontend-sub',
   )
 
   return sdk.Daemons.of(effects)
@@ -104,5 +112,25 @@ export const main = sdk.setupMain(async ({ effects }) => {
           }),
       },
       requires: ['mosquitto'],
+    })
+    .addDaemon('frontend', {
+      subcontainer: frontendSub,
+      exec: {
+        command: sdk.useEntrypoint(),
+        env: {
+          LISTEN_PORT: `${uiPort}`,
+          SERVER_HOST: '127.0.0.1',
+          SERVER_PORT: `${recorderHttpPort}`,
+        },
+      },
+      ready: {
+        display: i18n('Admin Web Map'),
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, uiPort, {
+            successMessage: i18n('The admin web map is ready'),
+            errorMessage: i18n('The admin web map is not ready'),
+          }),
+      },
+      requires: ['recorder'],
     })
 })

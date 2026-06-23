@@ -20,6 +20,10 @@ export const manifest = setupManifest({
       source: { dockerTag: 'owntracks/recorder:1.0.1' },
       arch: ['x86_64', 'aarch64'],
     },
+    frontend: {
+      source: { dockerTag: 'owntracks/frontend:2.15.3' },
+      arch: ['x86_64', 'aarch64'],
+    },
   },
   alerts: {
     install: null,

@@ -1,12 +1,15 @@
 import { i18n } from '../i18n'
 
-export function credentialsResult(username: string, password: string) {
+export function credentialsResult(
+  title: string,
+  message: string,
+  username: string,
+  password: string,
+) {
   return {
     version: '1' as const,
-    title: i18n('OwnTracks MQTT Credentials'),
-    message: i18n(
-      'Enter these in the OwnTracks app under Settings → Connection, along with your server address and port.',
-    ),
+    title,
+    message,
     result: {
       type: 'group' as const,
       value: [

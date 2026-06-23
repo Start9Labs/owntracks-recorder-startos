@@ -60,6 +60,13 @@ export const addUser = sdk.Action.withInput(
     })
     await sdk.action.clearTask(effects, 'owntracks-recorder:add-user')
 
-    return credentialsResult(username, password)
+    return credentialsResult(
+      i18n('OwnTracks MQTT Credentials'),
+      i18n(
+        'Enter these in the OwnTracks app under Settings → Connection, along with your server address and port.',
+      ),
+      username,
+      password,
+    )
   },
 )

@@ -8,6 +8,7 @@ const userSchema = z.object({
 
 const shape = z.object({
   recorderPassword: z.string().catch(''),
+  uiPassword: z.string().catch(''),
   users: z.record(z.string(), userSchema).catch({}),
 })
 

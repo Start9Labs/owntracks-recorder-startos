@@ -4,15 +4,17 @@ import { setInterfaces } from '../interfaces'
 import { versionGraph } from '../versions'
 import { actions } from '../actions'
 import { restoreInit } from '../backups'
-import { seedFiles } from './seedFiles'
+import { seedSecrets } from './seedSecrets'
+import { seedTasks } from './seedTasks'
 
 export const init = sdk.setupInit(
   restoreInit,
   versionGraph,
+  seedSecrets,
   setInterfaces,
   setDependencies,
   actions,
-  seedFiles,
+  seedTasks,
 )
 
 export const uninit = sdk.setupUninit(versionGraph)

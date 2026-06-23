@@ -11,9 +11,10 @@ A private location backbone for you and your household:
 
 - A **private MQTT broker** with a **separate account for each person or device**, so everyone publishes under their own login.
 - **Friends** — you decide, per person, whose locations show up in each person's phone app.
-- The **Recorder** quietly archives all location history on your server (included in your backups).
+- The **Recorder** archives all location history on your server (included in your backups).
+- An **Admin Web Map** — a map of every device on the server, for the server owner. It is protected by its own admin password and shows *everyone* (see [The Admin Web Map](#the-admin-web-map)).
 
-You view live locations **in the OwnTracks phone apps** themselves — there is no web map (see [Viewing your data](#viewing-your-data)). All data stays on your server.
+All data stays on your server.
 
 ## Getting set up
 
@@ -49,10 +50,22 @@ Friends are one-directional — if you want Jane and John to see each other, gra
 
 ## Viewing your data
 
-Live locations and friends appear **in the OwnTracks app** on each phone. There is intentionally no web map: the Recorder's data API cannot enforce per-person visibility, so a shared web page would show everyone's location to anyone who opened it. Your full location history is archived by the Recorder and travels with your StartOS **backups**.
+- **On each phone:** the OwnTracks app shows that person's location plus any friends you've granted them.
+- **Admin Web Map:** see [below](#the-admin-web-map).
+- **History:** the Recorder archives full history, which travels with your StartOS **backups**.
+
+## The Admin Web Map
+
+The **Admin Web Map** interface shows **every device** on the server on one map — it is an owner/admin overview, **not** a per-user view. It does not honor the Friends settings: anyone who signs in sees everyone.
+
+1. Open the **Admin Web Map Credentials** action (you'll be prompted by a task after install) and copy the **admin** username and password. These are **separate** from the MQTT accounts.
+2. Open the **Admin Web Map** interface from the **Dashboard** tab and sign in with those credentials.
+3. Use **Reset Admin Web Map Password** to rotate the admin password (you'll need to sign in again).
+
+Because it exposes everyone's location, treat the admin password as owner-only and don't share it with household members — give them MQTT accounts instead, and use Friends to control what they see in their apps.
 
 ## Limitations
 
+- The Admin Web Map shows all devices to anyone with the admin password; it cannot be scoped per-person. Keep that password to yourself.
 - MQTT uses TLS on port 8883. On a LAN or Tor address the certificate is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted certificate).
 - Adding/removing users or changing friends restarts the broker, briefly disconnecting connected apps.
-- There is no web interface; recorded history is retrieved via backups.

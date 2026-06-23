@@ -47,6 +47,22 @@ const dict = {
 
   // init
   'Add an MQTT user account for each person or device that will track location.': 28,
+
+  // main.ts (frontend) + admin web map interface
+  'Admin Web Map': 29,
+  'Unpermissioned admin view showing every device on the server. Protected by a separate admin password, not the MQTT credentials.': 30,
+  'The admin web map is ready': 31,
+  'The admin web map is not ready': 32,
+
+  // web UI actions
+  'Admin Web Map Credentials': 33,
+  'Show the admin username and password for the web map.': 34,
+  'Reset Admin Web Map Password': 35,
+  'Generate a new random admin password for the web map.': 36,
+  'After resetting, sign in again with the new password.': 37,
+  'Admin Web Map Login': 38,
+  'Use these credentials to sign in to the admin web map. They are separate from your MQTT user accounts.': 39,
+  'Save the admin password for the web map (separate from MQTT accounts).': 40,
 } as const
 
 /**
