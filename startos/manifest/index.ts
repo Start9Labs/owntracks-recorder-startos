@@ -2,19 +2,27 @@ import { setupManifest } from '@start9labs/start-sdk'
 import { long, short } from './i18n'
 
 export const manifest = setupManifest({
-  id: 'hello-world',
-  title: 'Hello World',
-  license: 'MIT',
-  packageRepo: 'https://github.com/Start9Labs/hello-world-startos',
-  upstreamRepo: 'https://github.com/Start9Labs/hello-world',
-  marketingUrl: 'https://start9.com/',
-  donationUrl: 'https://donate.start9.com/',
+  id: 'owntracks-recorder',
+  title: 'OwnTracks Recorder',
+  license: 'GPL-2.0-or-later',
+  packageRepo: 'https://github.com/Start9Labs/owntracks-recorder-startos',
+  upstreamRepo: 'https://github.com/owntracks/recorder',
+  marketingUrl: 'https://owntracks.org/',
+  donationUrl: null,
   description: { short, long },
   volumes: ['main'],
   images: {
-    'hello-world': {
-      source: { dockerTag: 'ghcr.io/start9labs/hello-world:2.0.0' },
-      arch: ['x86_64', 'aarch64', 'riscv64'],
+    mosquitto: {
+      source: { dockerTag: 'eclipse-mosquitto:2.0.22' },
+      arch: ['x86_64', 'aarch64'],
+    },
+    recorder: {
+      source: { dockerTag: 'owntracks/recorder:1.0.1' },
+      arch: ['x86_64', 'aarch64'],
+    },
+    frontend: {
+      source: { dockerTag: 'owntracks/frontend:2.15.3' },
+      arch: ['x86_64', 'aarch64'],
     },
   },
   alerts: {

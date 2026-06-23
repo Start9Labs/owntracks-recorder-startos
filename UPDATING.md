@@ -1,17 +1,27 @@
-# Updating the upstream version
+# Updating the upstream versions
 
-This package wraps Start9 Labs' own [hello-world](https://github.com/Start9Labs/hello-world) source, which we build and publish ourselves as `ghcr.io/start9labs/hello-world`. "Upstream" here means that source repo, not the image namespace.
+This package wraps three upstream images, each pinned in `startos/manifest/index.ts` under `images`:
 
-## Determining the upstream version
+| Image key   | Pin                         | Upstream                                              |
+| ----------- | --------------------------- | ---------------------------------------------------- |
+| `recorder`  | `owntracks/recorder:<ver>`  | [owntracks/recorder](https://github.com/owntracks/recorder) |
+| `frontend`  | `owntracks/frontend:<ver>`  | [owntracks/frontend](https://github.com/owntracks/frontend) |
+| `mosquitto` | `eclipse-mosquitto:<ver>`   | [eclipse-mosquitto/mosquitto](https://github.com/eclipse-mosquitto/mosquitto) |
 
-- **hello-world** ([Start9Labs/hello-world](https://github.com/Start9Labs/hello-world)) — fetch the latest release tag:
+The Recorder is the primary upstream and drives the package `version` in `startos/versions/current.ts`.
 
-  ```sh
-  gh release view -R Start9Labs/hello-world --json tagName -q .tagName
-  ```
+## Determining the latest versions
 
-  The current pin lives in `startos/manifest/index.ts` at `images['hello-world'].source.dockerTag` (the version after the `:` in `ghcr.io/start9labs/hello-world:<version>`).
+```sh
+gh release view -R owntracks/recorder --json tagName -q .tagName
+gh release view -R owntracks/frontend --json tagName -q .tagName
+# Mosquitto: stick to the latest 2.0.x tag on Docker Hub (library/eclipse-mosquitto)
+```
 
-## Applying the bump
+Confirm each tag is published and multi-arch (x86_64 + aarch64) before pinning it.
 
-- Bump `dockerTag` in `startos/manifest/index.ts` to `ghcr.io/start9labs/hello-world:<new version>` (drop the leading `v` from the release tag).
+## Applying a bump
+
+1. Update the relevant `dockerTag`(s) in `startos/manifest/index.ts`.
+2. If the Recorder version changed, update `version` in `startos/versions/current.ts` (format `<recorder-version>:<packaging-revision>`).
+3. Update `releaseNotes`, then `make` to verify the build.
