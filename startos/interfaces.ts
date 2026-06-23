@@ -28,7 +28,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
       alpn: null,
       auth: null,
     },
-    secure: { ssl: false },
+    secure: null,
   })
   const mqtt = sdk.createInterface(effects, {
     name: i18n('MQTT Broker'),
