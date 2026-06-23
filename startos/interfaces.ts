@@ -1,6 +1,6 @@
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { mqttPort, uiPort } from './utils'
+import { mqttPort, mqttsPort, uiPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
@@ -21,8 +21,13 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const mqttMulti = sdk.MultiHost.of(effects, 'mqtt-multi')
   const mqttMultiOrigin = await mqttMulti.bindPort(mqttPort, {
     protocol: null,
-    addSsl: null,
     preferredExternalPort: mqttPort,
+    addSsl: {
+      preferredExternalPort: mqttsPort,
+      addXForwardedHeaders: false,
+      alpn: null,
+      auth: null,
+    },
     secure: { ssl: false },
   })
   const mqtt = sdk.createInterface(effects, {

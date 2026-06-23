@@ -36,11 +36,11 @@ This package bundles three containers:
 ## Architecture
 
 ```
-phone apps ──MQTT(1883)──▶ Mosquitto ──▶ Recorder ──HTTP(8083)──▶ Frontend (nginx :80) ──▶ Web UI
-                            (broker)      (ot-recorder)             /api, /ws proxied to recorder
+phone apps ──MQTTS(8883)──▶ [StartOS TLS] ──▶ Mosquitto ──▶ Recorder ──HTTP(8083)──▶ Frontend (nginx :80) ──▶ Web UI
+                            terminate        (broker :1883)  (ot-recorder)            /api, /ws proxied to recorder
 ```
 
-All three containers share the pod's loopback, so the Recorder reaches Mosquitto on `127.0.0.1:1883` and the frontend proxies to the Recorder on `127.0.0.1:8083`. Only the **Web UI** (port 80) and the **MQTT broker** (port 1883) are exposed as StartOS interfaces; the Recorder HTTP API is internal.
+All three containers share the pod's loopback, so the Recorder reaches Mosquitto on `127.0.0.1:1883` and the frontend proxies to the Recorder on `127.0.0.1:8083`. Only the **Web UI** (port 80) and the **MQTT broker** are exposed as StartOS interfaces; the Recorder HTTP API is internal. The MQTT interface is exposed as **MQTTS on 8883** — StartOS terminates TLS at the edge and forwards plaintext to mosquitto's internal `1883` (set via `addSsl` on the raw-TCP bind), so the broker needs no TLS config of its own.
 
 ---
 
@@ -94,12 +94,14 @@ There are no free-form config forms. User-managed state is the set of MQTT users
 
 ## Network Access and Interfaces
 
-| Interface | Port | Protocol | Type | Purpose                                    |
-| --------- | ---- | -------- | ---- | ------------------------------------------ |
-| Web UI    | 80   | HTTP     | ui   | OwnTracks map and dashboard                |
-| MQTT      | 1883 | raw TCP  | api  | Endpoint the phone apps publish to (auth)  |
+| Interface | External Port | Protocol            | Type | Purpose                                   |
+| --------- | ------------- | ------------------- | ---- | ----------------------------------------- |
+| Web UI    | 80            | HTTP (TLS by OS)    | ui   | OwnTracks map and dashboard               |
+| MQTT      | 8883          | MQTTS (TLS by OS)   | api  | Endpoint the phone apps publish to (auth) |
 
-**Access methods:** LAN IP, `<hostname>.local`, Tor `.onion`, custom domains. MQTT auth (username/password) is a second factor on top of StartOS network access control.
+The MQTT bind is raw TCP internally (mosquitto on `1883`); StartOS adds TLS via `addSsl`, exposing MQTTS on `8883`. Apps connect with TLS and validate the StartOS-issued certificate.
+
+**Access methods:** LAN IP, `<hostname>.local`, Tor `.onion`, custom domains. Per-user MQTT credentials are a second factor on top of StartOS network access control and the TLS layer.
 
 ---
 
@@ -145,7 +147,7 @@ None.
 
 1. **HTTP-from-app mode is not used** — phone apps connect over **MQTT** to the bundled broker. This gives real-time "Friends" via the broker, with per-user ACLs controlling who sees whom.
 2. **The app username must equal the MQTT username.** The ACL only lets an account publish to `owntracks/<its-username>/#`, so the OwnTracks "username" and the MQTT username must match or publishes are denied.
-3. **MQTT is served as plaintext TCP** on 1883. Use it over LAN/VPN, or rely on StartOS network access control (Tor/custom domain). TLS for MQTT is not yet wired up.
+3. **MQTTS requires trusting the StartOS certificate.** TLS is terminated by StartOS on 8883; on a LAN/Tor address the cert is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted cert).
 4. **Applying account/friend changes restarts the broker.** Because the daemons read `store.json` reactively, any user/friend edit briefly disconnects all apps while the broker reloads.
 
 ---
@@ -164,8 +166,9 @@ volumes:
     mosquitto: /mosquitto/data
     recorder: /store
 ports:
-  ui: 80          # frontend (web map)
-  mqtt: 1883      # mosquitto (phone apps publish here)
+  ui: 80               # frontend (web map), TLS by StartOS
+  mqtt_internal: 1883  # mosquitto (plaintext within pod)
+  mqtt_external: 8883  # MQTTS, TLS terminated by StartOS via addSsl
   recorder_http: 8083  # internal only, proxied by frontend
 dependencies: none
 actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user]

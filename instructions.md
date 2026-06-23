@@ -21,10 +21,11 @@ You create one MQTT account per person (or device), then point each phone at the
 
 1. Open the **Add MQTT User** action (you'll be prompted by a task after install). Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown once — copy it.
 2. Repeat **Add MQTT User** for each person or device.
-3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. A custom domain or your LAN address is most practical for use on the road.
+3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A custom domain or your LAN address is most practical for use on the road. If you use a LAN or Tor address, install your StartOS root CA on the phone first so it trusts the certificate (a custom domain uses a publicly-trusted cert and needs no extra setup).
 4. On each phone, install the OwnTracks app ([iOS](https://apps.apple.com/app/owntracks/id692424691) / [Android](https://play.google.com/store/apps/details?id=org.owntracks.android)) and open **Settings → Connection**:
    - **Mode**: MQTT (private)
-   - **Host**: the MQTT hostname from step 3, **Port**: `1883`
+   - **Host**: the MQTT hostname from step 3, **Port**: `8883`
+   - **TLS**: enabled
    - **Username** / **Password**: that person's account from step 1
    - **Device ID**: a short name for the phone (e.g. `phone`)
    - **Username (identification)**: **must match the MQTT username** above — the broker only lets each account publish under its own name.
@@ -48,5 +49,5 @@ Friends are one-directional — if you want Jane and John to see each other, gra
 
 ## Limitations
 
-- The MQTT broker is reached over a plain (unencrypted) TCP connection. Use it over your LAN or a VPN, or via a StartOS custom domain, rather than exposing it to the open internet.
+- MQTT uses TLS on port 8883. On a LAN or Tor address the certificate is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted certificate).
 - Adding/removing users or changing friends restarts the broker, briefly disconnecting connected apps.
