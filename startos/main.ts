@@ -3,9 +3,11 @@ import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
 import {
-  defaultMqttUsername,
+  mosquittoAcl,
+  mosquittoAclFile,
   mosquittoConfFile,
   mosquittoConfig,
+  mosquittoCreds,
   mosquittoPasswdFile,
   mqttPort,
   recorderHttpPort,
@@ -17,8 +19,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting OwnTracks Recorder'))
 
   const store = await storeJson.read().const(effects)
-  const mqttUsername = store?.mqttUsername || defaultMqttUsername
-  const mqttPassword = store?.mqttPassword || ''
+  const users = store?.users || {}
   const recorderPassword = store?.recorderPassword || ''
 
   const mosquittoSub = await sdk.SubContainer.of(
@@ -33,6 +34,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     'mosquitto-sub',
   )
   await writeFile(`${mosquittoSub.rootfs}${mosquittoConfFile}`, mosquittoConfig())
+  await writeFile(`${mosquittoSub.rootfs}${mosquittoAclFile}`, mosquittoAcl(users))
 
   const recorderSub = await sdk.SubContainer.of(
     effects,
@@ -60,17 +62,15 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: [
           'sh',
           '-c',
-          `mosquitto_passwd -b -c ${mosquittoPasswdFile} "$MQTT_USER" "$MQTT_PASS" && ` +
-            `mosquitto_passwd -b ${mosquittoPasswdFile} "$REC_USER" "$REC_PASS" && ` +
-            `chown -R 1883:1883 /mosquitto && chmod 0600 ${mosquittoPasswdFile}`,
+          `rm -f ${mosquittoPasswdFile}\n` +
+            `printf '%s\\n' "$CREDS" | while IFS=: read -r u p; do\n` +
+            `  [ -z "$u" ] && continue\n` +
+            `  if [ ! -f ${mosquittoPasswdFile} ]; then mosquitto_passwd -b -c ${mosquittoPasswdFile} "$u" "$p"; else mosquitto_passwd -b ${mosquittoPasswdFile} "$u" "$p"; fi\n` +
+            `done\n` +
+            `chown -R 1883:1883 /mosquitto && chmod 0600 ${mosquittoPasswdFile} ${mosquittoAclFile}`,
         ],
         user: 'root',
-        env: {
-          MQTT_USER: mqttUsername,
-          MQTT_PASS: mqttPassword,
-          REC_USER: recorderMqttUsername,
-          REC_PASS: recorderPassword,
-        },
+        env: { CREDS: mosquittoCreds(users, recorderPassword) },
       },
       requires: [],
     })

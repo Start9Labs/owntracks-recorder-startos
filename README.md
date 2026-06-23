@@ -62,25 +62,33 @@ A single `main` volume holds everything (one backup target):
 
 | Subpath          | Mount Point        | Purpose                                  |
 | ---------------- | ------------------ | ---------------------------------------- |
-| `store.json`     | —                  | MQTT credentials (managed by this package) |
+| `store.json`     | —                  | MQTT users (per-user password + friends) + recorder password |
 | `mosquitto`      | `/mosquitto/data`  | Broker persistence (retained messages)   |
 | `recorder`       | `/store`           | Recorder location data (`rec/`, `last/`, `ghash/`) |
 
-`mosquitto.conf` and the broker `passwd` file are generated into the mosquitto container's rootfs on every start from `store.json` — they are not persisted.
+`mosquitto.conf`, the `acl` file, and the broker `passwd` file are generated into the mosquitto container's rootfs on every start from `store.json` — they are not persisted.
+
+`store.json` shape: `{ recorderPassword, users: { [username]: { password, friends: string[] } } }`. Any change to it triggers `setupMain` to re-run (the daemons read it via `.const(effects)`), which regenerates `passwd`/`acl` and restarts the broker — so adding a user or editing friends applies on the automatic restart.
 
 ---
 
 ## Installation and First-Run Flow
 
-1. On install, the package generates a random password for the user-facing MQTT account (username `owntracks`) and a separate internal password for the Recorder's broker connection, storing both in `store.json`.
-2. An **important task** prompts the user to open the **MQTT Credentials** action and save the username/password for entry into the phone apps.
-3. On every start, a oneshot rebuilds the Mosquitto `passwd` file (hashed via `mosquitto_passwd`) and fixes ownership before the broker launches.
+1. On install, the package generates the internal Recorder↔broker password (`recorderPassword`) and starts with **no** user accounts (`users: {}`).
+2. An **important task** prompts the user to run the **Add MQTT User** action to create an account for each person/device.
+3. On every start, the `setup-mosquitto` oneshot rebuilds the Mosquitto `passwd` file (hashed via `mosquitto_passwd`, one entry per user plus `recorder`) and fixes ownership before the broker launches; `main.ts` writes the `acl` file from each user's friends list.
 
 ---
 
 ## Configuration Management
 
-There are no free-form config forms. The only user-managed state is the MQTT password, handled through actions. `mosquitto.conf` is generated in code (`startos/utils.ts → mosquittoConfig()`): one authenticated listener on 1883, `allow_anonymous false`, persistence on.
+There are no free-form config forms. User-managed state is the set of MQTT users and their friend allow-lists, all handled through actions. `mosquitto.conf` is generated in code (`startos/utils.ts → mosquittoConfig()`): one authenticated listener on 1883, `allow_anonymous false`, `acl_file` enabled, persistence on.
+
+### Accounts and ACLs (Friends)
+
+- Each user is an MQTT account with its own password. The ACL grants `readwrite owntracks/<user>/#` — so a user can **only publish as themselves** (anti-spoofing) and read their own data.
+- "Friends" is per-user read access: for each friend `F` granted, the user's stanza gets `read owntracks/<F>/#`, so their phone app receives `F`'s locations. Friends are **not** symmetric unless granted both ways.
+- The `recorder` account has `readwrite owntracks/#` so it records everything and can relay remote commands.
 
 ---
 
@@ -97,10 +105,15 @@ There are no free-form config forms. The only user-managed state is the MQTT pas
 
 ## Actions (StartOS UI)
 
-| Action               | Input | Purpose                                                            |
-| -------------------- | ----- | ----------------------------------------------------------------- |
-| MQTT Credentials     | none  | Display the MQTT username and password for app setup              |
-| Reset MQTT Password  | none  | Generate a new random MQTT password (apps must be updated)        |
+| Action               | Input                          | Purpose                                                       |
+| -------------------- | ------------------------------ | ------------------------------------------------------------ |
+| Add MQTT User        | username                       | Create a new MQTT account; generates + shows its password    |
+| User Credentials     | select user                    | Show an existing account's username and password             |
+| Manage Friends       | per-user friend multiselects   | Set, for each user, which other users they can see           |
+| Reset User Password  | select user                    | Generate a new password for an account (app must be updated) |
+| Remove MQTT User     | select user                    | Delete an account and drop it from everyone's friends        |
+
+Actions that select an existing user are `visibility: 'hidden'` until at least one user exists (Manage Friends until at least two).
 
 ---
 
@@ -130,9 +143,10 @@ None.
 
 ## Limitations and Differences
 
-1. **HTTP-from-app mode is not used** — phone apps connect over **MQTT** to the bundled broker. This gives automatic, real-time "Friends" (each app sees the others) without manual allow-list configuration.
-2. **Single shared MQTT account** — all phone apps authenticate with the one `owntracks` MQTT account and distinguish themselves by the username/device set in the app. Per-user MQTT accounts and ACLs are not yet exposed.
+1. **HTTP-from-app mode is not used** — phone apps connect over **MQTT** to the bundled broker. This gives real-time "Friends" via the broker, with per-user ACLs controlling who sees whom.
+2. **The app username must equal the MQTT username.** The ACL only lets an account publish to `owntracks/<its-username>/#`, so the OwnTracks "username" and the MQTT username must match or publishes are denied.
 3. **MQTT is served as plaintext TCP** on 1883. Use it over LAN/VPN, or rely on StartOS network access control (Tor/custom domain). TLS for MQTT is not yet wired up.
+4. **Applying account/friend changes restarts the broker.** Because the daemons read `store.json` reactively, any user/friend edit briefly disconnects all apps while the broker reloads.
 
 ---
 
@@ -154,6 +168,7 @@ ports:
   mqtt: 1883      # mosquitto (phone apps publish here)
   recorder_http: 8083  # internal only, proxied by frontend
 dependencies: none
-actions: [mqtt-credentials, reset-mqtt-password]
-mqtt_user: owntracks
+actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user]
+store_shape: { recorderPassword, users: { [username]: { password, friends: [username] } } }
+mqtt_model: per-user accounts; acl readwrite owntracks/<user>/#, read owntracks/<friend>/# per granted friend
 ```

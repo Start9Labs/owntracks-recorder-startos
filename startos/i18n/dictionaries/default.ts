@@ -18,19 +18,40 @@ const dict = {
   'The OwnTracks web map and dashboard': 11,
   'The MQTT endpoint your OwnTracks apps publish location updates to': 12,
 
-  // actions
-  'MQTT Credentials': 13,
-  'Show the username and password your OwnTracks apps use to connect to the MQTT broker.': 14,
+  // actions (shared)
+  Username: 13,
+  Password: 14,
   'OwnTracks MQTT Credentials': 15,
   'Enter these in the OwnTracks app under Settings → Connection, along with your server address and port.': 16,
-  Username: 17,
-  Password: 18,
-  'Reset MQTT Password': 19,
-  'Generate a new random password for the MQTT account used by your OwnTracks apps. You must update the password in each app afterward.': 20,
-  'Existing apps will be disconnected until you update them with the new password.': 21,
+  User: 17,
+
+  // addUser
+  'Add MQTT User': 18,
+  'Create a new MQTT account for a person or device. A random password is generated and shown once.': 19,
+  'A short, lowercase name for the person or device (letters, numbers, - and _).': 20,
+
+  // removeUser
+  'Remove MQTT User': 21,
+  'Delete an MQTT account. The user can no longer connect and is removed from all friends lists.': 22,
+  'The user account to remove.': 23,
+
+  // userCredentials
+  'User Credentials': 24,
+  'Show the username and password for an existing MQTT account.': 25,
+  'The user account to show.': 26,
+
+  // resetUserPassword
+  'Reset User Password': 27,
+  'Generate a new random password for an existing MQTT account. The user must update their app afterward.': 28,
+  'The user account to reset.': 29,
+  'Existing apps for this user will be disconnected until updated with the new password.': 30,
+
+  // manageFriends
+  'Manage Friends': 31,
+  'For each user, choose which other users can be seen in their phone app.': 32,
 
   // init
-  'Save the MQTT username and password so your OwnTracks apps can connect.': 22,
+  'Add an MQTT user account for each person or device that will track location.': 33,
 } as const
 
 /**

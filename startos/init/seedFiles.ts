@@ -1,21 +1,20 @@
-import { mqttCredentials } from '../actions/mqttCredentials'
+import { addUser } from '../actions/addUser'
 import { storeJson } from '../fileModels/store.json'
 import { i18n } from '../i18n'
 import { sdk } from '../sdk'
-import { defaultMqttUsername, getDefaultPassword } from '../utils'
+import { getDefaultPassword } from '../utils'
 
 export const seedFiles = sdk.setupOnInit(async (effects, kind) => {
   if (kind !== 'install') return
 
   await storeJson.merge(effects, {
-    mqttUsername: defaultMqttUsername,
-    mqttPassword: getDefaultPassword(),
     recorderPassword: getDefaultPassword(),
+    users: {},
   })
 
-  await sdk.action.createOwnTask(effects, mqttCredentials, 'important', {
+  await sdk.action.createOwnTask(effects, addUser, 'important', {
     reason: i18n(
-      'Save the MQTT username and password so your OwnTracks apps can connect.',
+      'Add an MQTT user account for each person or device that will track location.',
     ),
   })
 })

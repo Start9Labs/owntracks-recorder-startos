@@ -1,7 +1,6 @@
-import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { defaultMqttUsername, mqttPort, uiPort } from './utils'
+import { mqttPort, uiPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
@@ -19,10 +18,6 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   })
   const uiReceipt = await uiMultiOrigin.export([ui])
 
-  const mqttUsername =
-    (await storeJson.read((s) => s.mqttUsername).const(effects)) ||
-    defaultMqttUsername
-
   const mqttMulti = sdk.MultiHost.of(effects, 'mqtt-multi')
   const mqttMultiOrigin = await mqttMulti.bindPort(mqttPort, {
     protocol: null,
@@ -39,7 +34,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     type: 'api',
     masked: false,
     schemeOverride: { ssl: 'mqtts', noSsl: 'mqtt' },
-    username: mqttUsername,
+    username: null,
     path: '',
     query: {},
   })

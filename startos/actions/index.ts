@@ -1,7 +1,13 @@
 import { sdk } from '../sdk'
-import { mqttCredentials } from './mqttCredentials'
-import { resetMqttPassword } from './resetMqttPassword'
+import { addUser } from './addUser'
+import { manageFriends } from './manageFriends'
+import { removeUser } from './removeUser'
+import { resetUserPassword } from './resetUserPassword'
+import { userCredentials } from './userCredentials'
 
 export const actions = sdk.Actions.of()
-  .addAction(mqttCredentials)
-  .addAction(resetMqttPassword)
+  .addAction(addUser)
+  .addAction(userCredentials)
+  .addAction(manageFriends)
+  .addAction(resetUserPassword)
+  .addAction(removeUser)
