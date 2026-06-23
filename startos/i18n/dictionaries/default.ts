@@ -54,19 +54,16 @@ const dict = {
   'The admin web map is ready': 31,
   'The admin web map is not ready': 32,
 
-  // web UI actions
-  'Admin Web Map Credentials': 33,
-  'Show the admin username and password for the web map.': 34,
-  'Reset Admin Web Map Password': 35,
-  'Generate a new random admin password for the web map.': 36,
-  'After resetting, sign in again with the new password.': 37,
-  'Admin Web Map Login': 38,
-  'Use these credentials to sign in to the admin web map. They are separate from your MQTT user accounts.': 39,
-  'Save the admin password for the web map (separate from MQTT accounts).': 40,
+  // admin web map password (setWebUiPassword)
+  'Admin Web Map Login': 33,
+  'Use these credentials to sign in to the admin web map. They are separate from your MQTT user accounts.': 34,
+  'Set Admin Web Map Password': 35,
+  'Generate a new admin password for the web map. The username is always "admin".': 36,
+  'Set the admin password for the web map before starting the service.': 37,
 
   // disabled-action reasons
-  'No MQTT users exist yet.': 41,
-  'Add at least two users to manage friends.': 42,
+  'No MQTT users exist yet.': 38,
+  'Add at least two users to manage friends.': 39,
 } as const
 
 /**

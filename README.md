@@ -33,6 +33,7 @@ The Recorder's HTTP API has **no per-user authorization** — it serves every us
 - [Health Checks](#health-checks)
 - [Dependencies](#dependencies)
 - [Limitations and Differences](#limitations-and-differences)
+- [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
@@ -50,13 +51,13 @@ All three containers share the pod's loopback, so the Recorder reaches Mosquitto
 
 ## Image and Container Runtime
 
-| Container | Image                       | Command                                                   |
-| --------- | --------------------------- | -------------------------------------------------------- |
-| mosquitto | `eclipse-mosquitto:2.0.22`  | entrypoint with generated `mosquitto.conf`                |
-| recorder  | `owntracks/recorder:1.0.1`  | entrypoint `--http-host 127.0.0.1 --http-port 8083`       |
-| frontend  | `owntracks/frontend:2.15.3` | entrypoint (`SERVER_HOST=127.0.0.1`, `SERVER_PORT=8083`)  |
+| Container | Image                | Command                                                  |
+| --------- | -------------------- | -------------------------------------------------------- |
+| mosquitto | `eclipse-mosquitto`  | entrypoint with generated `mosquitto.conf`               |
+| recorder  | `owntracks/recorder` | entrypoint `--http-host 127.0.0.1 --http-port 8083`      |
+| frontend  | `owntracks/frontend` | entrypoint (`SERVER_HOST=127.0.0.1`, `SERVER_PORT=8083`) |
 
-Architectures: x86_64, aarch64.
+All three are upstream images, unmodified; their pinned tags live in `startos/manifest/index.ts` (the manifest is the source of truth for versions). Architectures: x86_64, aarch64.
 
 ---
 
@@ -78,8 +79,8 @@ A single `main` volume holds everything (one backup target):
 
 ## Installation and First-Run Flow
 
-1. On install, the package generates the internal Recorder↔broker password (`recorderPassword`) and the **admin web-map password** (`uiPassword`), and starts with **no** MQTT user accounts.
-2. Two **important tasks** prompt the user to run **Add MQTT User** (one account per person/device) and **Admin Web Map Credentials** (save the admin password).
+1. On install, the package generates only the internal Recorder↔broker password (`recorderPassword`); the admin web-map password is **not** auto-generated, and there are **no** MQTT user accounts yet.
+2. A **critical task** requires **Set Admin Web Map Password** before the service can start (it generates the password and shows it once). An **important task** then prompts **Add MQTT User** (one account per person/device).
 3. On every start, the `setup-mosquitto` oneshot rebuilds the Mosquitto `passwd` file (one entry per user plus `recorder`) and `acl` file, then the broker, recorder, and frontend start in order.
 
 ---
@@ -96,7 +97,7 @@ There are no free-form config forms. User-managed state is the MQTT users + thei
 
 ### Admin web map
 
-The frontend is gated by StartOS-proxy HTTP basic auth (`addSsl.auth`), username `admin`, password = `uiPassword` from `store.json` (generated on install, rotated by an action). This is **distinct** from the MQTT user credentials. The gate protects the whole origin, including the proxied `/api` and `/ws` — the Recorder API is never reachable un-gated.
+The frontend is gated by StartOS-proxy HTTP basic auth (`addSsl.auth`), username `admin`, password = `uiPassword` from `store.json`. The user sets it via the **Set Admin Web Map Password** action; until they do, a **critical task** (`watchWebUiPassword`) blocks the service from starting (the gate would otherwise bind an empty password). Re-running the action rotates it. This is **distinct** from the MQTT user credentials. The gate protects the whole origin, including the proxied `/api` and `/ws` — the Recorder API is never reachable un-gated.
 
 ---
 
@@ -122,8 +123,7 @@ The MQTT bind is raw TCP internally (mosquitto on `1883`); StartOS adds TLS via 
 | Manage Friends               | per-user friend multiselects | Set, for each user, which other users they can see         |
 | Reset User Password          | select user                  | Generate a new password for an account                     |
 | Remove MQTT User             | select user                  | Delete an account and drop it from everyone's friends      |
-| Admin Web Map Credentials    | none                         | Show the admin username/password for the web map           |
-| Reset Admin Web Map Password | none                         | Generate a new admin password for the web map              |
+| Set Admin Web Map Password   | none                         | Set/rotate the admin password (generated, shown once); a critical task requires it before first start |
 
 MQTT actions that select an existing user are **disabled** (visible, with an explanatory reason) until at least one user exists (Manage Friends until at least two).
 
@@ -162,14 +162,25 @@ None.
 
 ---
 
+## What Is Unchanged from Upstream
+
+The three images run unmodified, so everything below behaves exactly as upstream documents:
+
+- **Mosquitto** is stock `eclipse-mosquitto`. Only its `mosquitto.conf`, `acl`, and `passwd` are generated by this package; the broker, MQTT protocol semantics, and persistence behavior are upstream's.
+- **The Recorder** is stock `ot-recorder`: its on-disk storage layout (`rec/`, `last/`, `ghash/`), HTTP/WebSocket API, reverse-geocoding, and Lua hooks all work as documented.
+- **The web map (frontend)** is the stock OwnTracks web app — its map UI, device list, and history playback are upstream's; this package only puts it behind an admin gate.
+- **The OwnTracks mobile apps** are entirely unchanged: MQTT topic scheme (`owntracks/<user>/<device>`), message formats (location, transition, waypoint), regions/waypoints, and all in-app settings behave as upstream documents.
+
+---
+
 ## Quick Reference for AI Consumers
 
 ```yaml
 package_id: owntracks-recorder
 images:
-  mosquitto: eclipse-mosquitto:2.0.22
-  recorder: owntracks/recorder:1.0.1
-  frontend: owntracks/frontend:2.15.3
+  mosquitto: eclipse-mosquitto
+  recorder: owntracks/recorder
+  frontend: owntracks/frontend
 architectures: [x86_64, aarch64]
 volumes:
   main:
@@ -180,9 +191,12 @@ ports:
   mqtt_internal: 1883  # mosquitto (plaintext within pod)
   mqtt_external: 8883  # MQTTS, TLS terminated by StartOS via addSsl (only mqtt port published)
   recorder_http: 8083  # internal only, proxied by the gated frontend
-web_ui: admin-only  # basic-auth (uiPassword, user 'admin'); shows ALL users (recorder API has no per-user authz)
+web_ui: admin-only  # basic-auth (uiPassword, user 'admin'); set via set-web-ui-password critical task before start; shows ALL users (recorder API has no per-user authz)
 dependencies: none
-actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user, web-ui-credentials, reset-web-ui-password]
+startos_managed_env_vars:
+  recorder: [OTR_HOST, OTR_PORT, OTR_USER, OTR_PASS]
+  frontend: [LISTEN_PORT, SERVER_HOST, SERVER_PORT]
+actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user, set-web-ui-password]
 store_shape: { recorderPassword, uiPassword, users: { [username]: { password, friends: [username] } } }
 mqtt_model: per-user accounts; acl readwrite owntracks/<user>/#, read owntracks/<friend>/# per granted friend
 ```

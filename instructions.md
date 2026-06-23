@@ -18,9 +18,11 @@ All data stays on your server.
 
 ## Getting set up
 
-You create one MQTT account per person (or device), then point each phone at the server.
+After install, you'll be prompted to run the required **Set Admin Web Map Password** task — it generates the admin password (copy it; see [The Admin Web Map](#the-admin-web-map)) and unlocks the rest of the service.
 
-1. Open the **Add MQTT User** action (you'll be prompted by a task after install). Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown once — copy it.
+Then create one MQTT account per person (or device) and point each phone at the server.
+
+1. Open the **Add MQTT User** action. Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown once — copy it.
 2. Repeat **Add MQTT User** for each person or device.
 3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A custom domain or your LAN address is most practical for use on the road. If you use a LAN or Tor address, install your StartOS root CA on the phone first so it trusts the certificate (a custom domain uses a publicly-trusted cert and needs no extra setup).
 4. On each phone, install the OwnTracks app ([iOS](https://apps.apple.com/app/owntracks/id692424691) / [Android](https://play.google.com/store/apps/details?id=org.owntracks.android)) and open **Settings → Connection**:
@@ -58,9 +60,9 @@ Friends are one-directional — if you want Jane and John to see each other, gra
 
 The **Admin Web Map** interface shows **every device** on the server on one map — it is an owner/admin overview, **not** a per-user view. It does not honor the Friends settings: anyone who signs in sees everyone.
 
-1. Open the **Admin Web Map Credentials** action (you'll be prompted by a task after install) and copy the **admin** username and password. These are **separate** from the MQTT accounts.
+1. Run the **Set Admin Web Map Password** action (a required task before the service starts). It generates the password and shows it once — copy it. The username is always `admin`, and these credentials are **separate** from the MQTT accounts.
 2. Open the **Admin Web Map** interface from the **Dashboard** tab and sign in with those credentials.
-3. Use **Reset Admin Web Map Password** to rotate the admin password (you'll need to sign in again).
+3. Re-run **Set Admin Web Map Password** any time to rotate it (you'll need to sign in again).
 
 Because it exposes everyone's location, treat the admin password as owner-only and don't share it with household members — give them MQTT accounts instead, and use Friends to control what they see in their apps.
 

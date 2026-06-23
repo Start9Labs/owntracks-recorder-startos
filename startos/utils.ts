@@ -19,9 +19,7 @@ export const mosquittoDataDir = '/mosquitto/data'
 export const usernamePattern = '^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$'
 
 export function isValidUsername(name: string): boolean {
-  return (
-    name !== recorderMqttUsername && new RegExp(usernamePattern).test(name)
-  )
+  return name !== recorderMqttUsername && new RegExp(usernamePattern).test(name)
 }
 
 export function getDefaultPassword(): string {

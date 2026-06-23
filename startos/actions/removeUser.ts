@@ -1,4 +1,4 @@
-import { storeJson } from '../fileModels/store.json'
+import { storeJson, User } from '../fileModels/store.json'
 import { i18n } from '../i18n'
 import { sdk } from '../sdk'
 
@@ -42,17 +42,20 @@ export const removeUser = sdk.Action.withInput(
   async () => undefined,
 
   async ({ effects, input }) => {
-    const users = (await storeJson.read((s) => s.users).once()) || {}
-    if (!users[input.user]) return
+    const store = await storeJson.read().once()
+    if (!store?.users[input.user]) return
 
-    const next = Object.fromEntries(
-      Object.entries(users)
-        .filter(([name]) => name !== input.user)
-        .map(([name, user]) => [
-          name,
-          { ...user, friends: user.friends.filter((f) => f !== input.user) },
-        ]),
-    )
-    await storeJson.merge(effects, { users: next })
+    // Removal needs a full write(), not merge(): merge keeps record keys absent
+    // from the patch, and passing `undefined` to delete one trips the users
+    // `.catch({})` and wipes every account. Rebuild the map and overwrite.
+    const users: Record<string, User> = {}
+    for (const [name, user] of Object.entries(store.users)) {
+      if (name === input.user) continue
+      users[name] = {
+        ...user,
+        friends: user.friends.filter((f) => f !== input.user),
+      }
+    }
+    await storeJson.write(effects, { ...store, users })
   },
 )

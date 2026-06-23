@@ -4,13 +4,15 @@ import { sdk } from '../sdk'
 import { getDefaultPassword, uiUsername } from '../utils'
 import { credentialsResult } from './common'
 
-export const resetWebUiPassword = sdk.Action.withoutInput(
-  'reset-web-ui-password',
+export const setWebUiPassword = sdk.Action.withoutInput(
+  'set-web-ui-password',
 
   async () => ({
-    name: i18n('Reset Admin Web Map Password'),
-    description: i18n('Generate a new random admin password for the web map.'),
-    warning: i18n('After resetting, sign in again with the new password.'),
+    name: i18n('Set Admin Web Map Password'),
+    description: i18n(
+      'Generate a new admin password for the web map. The username is always "admin".',
+    ),
+    warning: null,
     allowedStatuses: 'any',
     group: null,
     visibility: 'enabled',
