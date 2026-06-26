@@ -64,6 +64,17 @@ const dict = {
   // disabled-action reasons
   'No MQTT users exist yet.': 38,
   'Add at least two users to manage friends.': 39,
+
+  // forgetTracks
+  'Forget Device Tracks': 40,
+  "Wipe a device's location history and last-known position from the map, based on the user/device pair.": 41,
+  '(no recorded devices)': 42,
+  'Recorded Device': 43,
+  'User and device-id pair to forget. Both the last-known location and the full history are removed.': 44,
+  'This deletes all tracks for the selected device. Irreversible.': 45,
+  'Tracks Deleted': 46,
+  'Removed the recorder history and cleared the broker retention for this device. Other phones may need to force-stop and reopen the OwnTracks app for the marker to disappear.': 47,
+  'Device ID': 48,
 } as const
 
 /**

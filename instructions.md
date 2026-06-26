@@ -24,7 +24,9 @@ Then create one MQTT account per person (or device) and point each phone at the 
 
 1. Open the **Add MQTT User** action. Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown once — copy it.
 2. Repeat **Add MQTT User** for each person or device.
-3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A custom domain or your LAN address is most practical for use on the road. If you use a LAN or Tor address, install your StartOS root CA on the phone first so it trusts the certificate (a custom domain uses a publicly-trusted cert and needs no extra setup).
+3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A LAN IP or `.local` hostname works at home; for use on the road, expose the interface on a public domain — e.g. via **StartTunnel** — which provisions a publicly-trusted Let's Encrypt cert.
+
+   On a LAN or Tor address the cert is signed by your StartOS root CA, so the phone must trust that CA first — download it from the StartOS UI and install it on the phone (the same CA your browser was asked to trust when you set up StartOS). A public domain via StartTunnel needs no CA install and works cleanly on iOS.
 4. On each phone, install the OwnTracks app ([iOS](https://apps.apple.com/app/owntracks/id692424691) / [Android](https://play.google.com/store/apps/details?id=org.owntracks.android)) and open **Settings → Connection**:
    - **Mode**: MQTT (private)
    - **Host**: the MQTT hostname from step 3, **Port**: `8883`
@@ -49,6 +51,7 @@ Friends are one-directional — if you want Jane and John to see each other, gra
 - **User Credentials** — re-display a user's username and password.
 - **Reset User Password** — issue a new password for a user (update their app afterward).
 - **Remove MQTT User** — delete an account; they're also dropped from everyone's friends.
+- **Forget Device Tracks** — permanently delete one phone's recorded history. Pick the `user / device` pair to forget; it removes that device's stored history *and* clears the broker's retained location so the marker disappears for everyone (other phones may need a force-stop-and-reopen). Useful after a reinstall changes a phone's Device ID and leaves a stale marker behind. **Irreversible.**
 
 ## Viewing your data
 
@@ -69,5 +72,6 @@ Because it exposes everyone's location, treat the admin password as owner-only a
 ## Limitations
 
 - The Admin Web Map shows all devices to anyone with the admin password; it cannot be scoped per-person. Keep that password to yourself.
-- MQTT uses TLS on port 8883. On a LAN or Tor address the certificate is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted certificate).
+- On a LAN or Tor address, the MQTT endpoint (8883) presents a certificate signed by your StartOS root CA, so the phone must trust that CA — install your StartOS root CA on the phone (download it from the StartOS UI). Exposing the interface on a public domain via StartTunnel gives a publicly-trusted Let's Encrypt certificate instead, with no CA install.
+- On a LAN address, the MQTT endpoint is reachable over IPv4. For remote access, use a public domain (StartTunnel) — verified working on iOS.
 - Adding/removing users or changing friends restarts the broker, briefly disconnecting connected apps.

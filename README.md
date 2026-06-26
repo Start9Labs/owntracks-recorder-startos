@@ -110,7 +110,7 @@ The frontend is gated by StartOS-proxy HTTP basic auth (`addSsl.auth`), username
 
 The MQTT bind is raw TCP internally (mosquitto on `1883`); StartOS adds TLS via `addSsl` (`secure: null`, so no plaintext endpoint is published), exposing only MQTTS on `8883`.
 
-**Access methods:** LAN IP, `<hostname>.local`, Tor `.onion`, custom domains.
+**Access methods:** LAN IP, `<hostname>.local`, Tor `.onion`, custom domains (including public clearnet via StartTunnel, which gets a publicly-trusted Let's Encrypt cert).
 
 ---
 
@@ -124,8 +124,11 @@ The MQTT bind is raw TCP internally (mosquitto on `1883`); StartOS adds TLS via 
 | Reset User Password          | select user                  | Generate a new password for an account                     |
 | Remove MQTT User             | select user                  | Delete an account and drop it from everyone's friends      |
 | Set Admin Web Map Password   | none                         | Set/rotate the admin password (generated, shown once); a critical task requires it before first start |
+| Forget Device Tracks         | select user/device pair      | Permanently delete a recorded user/device's history and clear the broker's retained messages for it |
 
 MQTT actions that select an existing user are **disabled** (visible, with an explanatory reason) until at least one user exists (Manage Friends until at least two).
+
+**Forget Device Tracks** enumerates the `user/device` pairs under the Recorder's `/store/last` (in a temporary read-only recorder subcontainer), then on the chosen pair removes `last/<user>/<device>` and `rec/<user>/<device>` and publishes empty retained (`-r -n`) messages over `owntracks/<user>/<device>{,/info,/event,…}` as the `recorder` account so the marker doesn't reappear on other phones' next reconnect.
 
 ---
 
@@ -157,7 +160,7 @@ None.
 
 1. **The web map is an unpermissioned admin god-view.** It shows every device on the server to whoever holds the admin password — it does **not** honor the per-user Friend ACLs (the Recorder API can't). Treat the admin password as owner-only. Per-user privacy applies to the phone apps.
 2. **The app username must equal the MQTT username.** The ACL only lets an account publish to `owntracks/<its-username>/#`, so the OwnTracks "username" and the MQTT username must match or publishes are denied.
-3. **MQTTS requires trusting the StartOS certificate.** On a LAN/Tor address the cert is signed by your StartOS root CA, so the phone must trust that CA (install it, or use a custom domain with a publicly-trusted cert).
+3. **The TLS cert depends on how you reach it.** On a LAN/Tor address the MQTTS cert is signed by your StartOS root CA, so the phone must trust that CA — install it from the StartOS UI. Exposing the MQTT interface on a public domain (e.g. via **StartTunnel**) gets a publicly-trusted Let's Encrypt cert instead, so no CA install is needed (this also works cleanly on iOS).
 4. **Applying account/friend changes restarts the broker.** Because the daemons read `store.json` reactively, any user/friend edit briefly disconnects all apps while the broker reloads.
 
 ---
@@ -188,7 +191,7 @@ volumes:
     recorder: /store
 ports:
   ui: 80               # Admin Web Map (frontend), TLS by StartOS, basic-auth gated
-  mqtt_internal: 1883  # mosquitto (plaintext within pod)
+  mqtt_internal: 1883  # mosquitto TCP listener (plaintext within pod)
   mqtt_external: 8883  # MQTTS, TLS terminated by StartOS via addSsl (only mqtt port published)
   recorder_http: 8083  # internal only, proxied by the gated frontend
 web_ui: admin-only  # basic-auth (uiPassword, user 'admin'); set via set-web-ui-password critical task before start; shows ALL users (recorder API has no per-user authz)
@@ -196,7 +199,7 @@ dependencies: none
 startos_managed_env_vars:
   recorder: [OTR_HOST, OTR_PORT, OTR_USER, OTR_PASS]
   frontend: [LISTEN_PORT, SERVER_HOST, SERVER_PORT]
-actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user, set-web-ui-password]
+actions: [add-user, user-credentials, manage-friends, reset-user-password, remove-user, set-web-ui-password, forget-tracks]
 store_shape: { recorderPassword, uiPassword, users: { [username]: { password, friends: [username] } } }
 mqtt_model: per-user accounts; acl readwrite owntracks/<user>/#, read owntracks/<friend>/# per granted friend
 ```
