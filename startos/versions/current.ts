@@ -1,7 +1,7 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '1.0.1:0',
+  version: '1.0.1:1',
   releaseNotes: {
     en_US: 'Initial release of OwnTracks Recorder for StartOS.',
     es_ES: 'Versión inicial de OwnTracks Recorder para StartOS.',

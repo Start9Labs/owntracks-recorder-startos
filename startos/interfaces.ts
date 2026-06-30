@@ -27,7 +27,11 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     type: 'ui',
     masked: false,
     schemeOverride: null,
-    username: uiUsername,
+    // Do NOT set `username` here. The SDK would fold it into the address as
+    // `admin@<host>`, and Chromium-based browsers strip/refuse userinfo in
+    // top-level navigations — so the launch link breaks. The basic-auth gate
+    // (addSsl.auth above) still prompts for the username; it's always 'admin'.
+    username: null,
     path: '',
     query: {},
   })
