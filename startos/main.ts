@@ -22,7 +22,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const users = store?.users || {}
   const recorderPassword = store?.recorderPassword || ''
 
-  const mosquittoSub = await sdk.SubContainer.of(
+  const mosquittoSub = sdk.SubContainer.of(
     effects,
     { imageId: 'mosquitto' },
     sdk.Mounts.of().mountVolume({
@@ -33,16 +33,17 @@ export const main = sdk.setupMain(async ({ effects }) => {
     }),
     'mosquitto-sub',
   )
+  const mosquittoRootfs = await mosquittoSub.rootfs
   await writeFile(
-    `${mosquittoSub.rootfs}${mosquittoConfFile}`,
+    `${mosquittoRootfs}${mosquittoConfFile}`,
     mosquittoConfig(),
   )
   await writeFile(
-    `${mosquittoSub.rootfs}${mosquittoAclFile}`,
+    `${mosquittoRootfs}${mosquittoAclFile}`,
     mosquittoAcl(users),
   )
 
-  const recorderSub = await sdk.SubContainer.of(
+  const recorderSub = sdk.SubContainer.of(
     effects,
     { imageId: 'recorder' },
     sdk.Mounts.of().mountVolume({
@@ -54,7 +55,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     'recorder-sub',
   )
 
-  const frontendSub = await sdk.SubContainer.of(
+  const frontendSub = sdk.SubContainer.of(
     effects,
     { imageId: 'frontend' },
     sdk.Mounts.of(),
