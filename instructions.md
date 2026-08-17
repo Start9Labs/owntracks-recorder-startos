@@ -12,7 +12,7 @@ A private location backbone for you and your household:
 - A **private MQTT broker** with a **separate account for each person or device**, so everyone publishes under their own login.
 - **Friends** — you decide, per person, whose locations show up in each person's phone app.
 - The **Recorder** archives all location history on your server (included in your backups).
-- An **Admin Web Map** — a map of every device on the server, for the server owner. It is protected by its own admin password and shows *everyone* (see [The Admin Web Map](#the-admin-web-map)).
+- An **Admin Web Map** — a map of every device on the server, for the server owner. It is protected by its own admin password and shows _everyone_ (see [The Admin Web Map](#the-admin-web-map)).
 
 All data stays on your server.
 
@@ -27,6 +27,7 @@ Then create one MQTT account per person (or device) and point each phone at the 
 3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A LAN IP or `.local` hostname works at home; for use on the road, expose the interface on a public domain — e.g. via **StartTunnel** — which provisions a publicly-trusted Let's Encrypt cert.
 
    On a LAN or Tor address the cert is signed by your StartOS root CA, so the phone must trust that CA first — download it from the StartOS UI and install it on the phone (the same CA your browser was asked to trust when you set up StartOS). A public domain via StartTunnel needs no CA install and works cleanly on iOS.
+
 4. On each phone, install the OwnTracks app ([iOS](https://apps.apple.com/app/owntracks/id692424691) / [Android](https://play.google.com/store/apps/details?id=org.owntracks.android)) and open **Settings → Connection**:
    - **Mode**: MQTT (private)
    - **Host**: the MQTT hostname from step 3, **Port**: `8883`
@@ -44,14 +45,14 @@ By default a new user sees only their own location in their app. To let people s
 2. For each user, check the other users whose locations should appear in that user's phone app.
 3. Save. The broker restarts briefly to apply the change.
 
-Friends are one-directional — if you want Jane and John to see each other, grant John to Jane *and* Jane to John.
+Friends are one-directional — if you want Jane and John to see each other, grant John to Jane _and_ Jane to John.
 
 ## Managing accounts
 
 - **User Credentials** — re-display a user's username and password.
 - **Reset User Password** — issue a new password for a user (update their app afterward).
 - **Remove MQTT User** — delete an account; they're also dropped from everyone's friends.
-- **Forget Device Tracks** — permanently delete one phone's recorded history. Pick the `user / device` pair to forget; it removes that device's stored history *and* clears the broker's retained location so the marker disappears for everyone (other phones may need a force-stop-and-reopen). Useful after a reinstall changes a phone's Device ID and leaves a stale marker behind. **Irreversible.**
+- **Forget Device Tracks** — permanently delete one phone's recorded history. Pick the `user / device` pair to forget; it removes that device's stored history _and_ clears the broker's retained location so the marker disappears for everyone (other phones may need a force-stop-and-reopen). Useful after a reinstall changes a phone's Device ID and leaves a stale marker behind. **Irreversible.**
 
 ## Viewing your data
 

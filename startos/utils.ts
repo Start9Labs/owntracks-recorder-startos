@@ -18,6 +18,8 @@ export const mosquittoDataDir = '/mosquitto/data'
 
 export const usernamePattern = '^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$'
 
+// `recorder` is reserved: it is the recorder's own broker account, with
+// read/write across every topic, so a user must never be able to claim it.
 export function isValidUsername(name: string): boolean {
   return name !== recorderMqttUsername && new RegExp(usernamePattern).test(name)
 }

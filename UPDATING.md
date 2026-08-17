@@ -2,11 +2,11 @@
 
 This package wraps three upstream images, each pinned in `startos/manifest/index.ts` under `images`:
 
-| Image key   | Pin                         | Upstream                                              |
-| ----------- | --------------------------- | ---------------------------------------------------- |
-| `recorder`  | `owntracks/recorder:<ver>`  | [owntracks/recorder](https://github.com/owntracks/recorder) |
-| `frontend`  | `owntracks/frontend:<ver>`  | [owntracks/frontend](https://github.com/owntracks/frontend) |
-| `mosquitto` | `eclipse-mosquitto:<ver>`   | [eclipse-mosquitto/mosquitto](https://github.com/eclipse-mosquitto/mosquitto) |
+| Image key   | Pin                        | Upstream                                                                      |
+| ----------- | -------------------------- | ----------------------------------------------------------------------------- |
+| `recorder`  | `owntracks/recorder:<ver>` | [owntracks/recorder](https://github.com/owntracks/recorder)                   |
+| `frontend`  | `owntracks/frontend:<ver>` | [owntracks/frontend](https://github.com/owntracks/frontend)                   |
+| `mosquitto` | `eclipse-mosquitto:<ver>`  | [eclipse-mosquitto/mosquitto](https://github.com/eclipse-mosquitto/mosquitto) |
 
 The Recorder is the primary upstream and drives the package `version` in `startos/versions/current.ts`.
 
