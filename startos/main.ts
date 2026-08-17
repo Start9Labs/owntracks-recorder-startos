@@ -34,14 +34,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
     'mosquitto-sub',
   )
   const mosquittoRootfs = await mosquittoSub.rootfs
-  await writeFile(
-    `${mosquittoRootfs}${mosquittoConfFile}`,
-    mosquittoConfig(),
-  )
-  await writeFile(
-    `${mosquittoRootfs}${mosquittoAclFile}`,
-    mosquittoAcl(users),
-  )
+  await writeFile(`${mosquittoRootfs}${mosquittoConfFile}`, mosquittoConfig())
+  await writeFile(`${mosquittoRootfs}${mosquittoAclFile}`, mosquittoAcl(users))
 
   const recorderSub = sdk.SubContainer.of(
     effects,
