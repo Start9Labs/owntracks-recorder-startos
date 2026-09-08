@@ -17,7 +17,7 @@ export const manifest = setupManifest({
       arch: ['x86_64', 'aarch64'],
     },
     recorder: {
-      source: { dockerTag: 'owntracks/recorder:1.0.3' },
+      source: { dockerTag: 'owntracks/recorder:1.0.4' },
       arch: ['x86_64', 'aarch64'],
     },
     frontend: {
