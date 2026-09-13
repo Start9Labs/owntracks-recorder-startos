@@ -88,6 +88,12 @@ export const main = sdk.setupMain(async ({ effects }) => {
       },
       requires: ['setup-mosquitto'],
     })
+    .addOneshot('setup-recorder', {
+      subcontainer: recorderSub,
+      // The web map reads /store/rec and /store/last, which the recorder only creates on its first stored location
+      exec: { command: ['mkdir', '-p', '/store/rec', '/store/last'] },
+      requires: [],
+    })
     .addDaemon('recorder', {
       subcontainer: recorderSub,
       exec: {
@@ -112,7 +118,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
             errorMessage: i18n('The recorder is not ready'),
           }),
       },
-      requires: ['mosquitto'],
+      requires: ['mosquitto', 'setup-recorder'],
     })
     .addDaemon('frontend', {
       subcontainer: frontendSub,
