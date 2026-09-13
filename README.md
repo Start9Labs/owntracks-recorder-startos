@@ -52,6 +52,8 @@ Three upstream images, unmodified, run as three daemons in a fixed chain.
 
 A oneshot, `setup-mosquitto`, then builds the hashed password file from those same users before the broker starts, and locks both files down to the broker's own uid.
 
+A second oneshot, `setup-recorder`, creates `/store/rec` and `/store/last` before the recorder starts, so the web map's listings succeed before the first location has been stored.
+
 **Only the web map's port is published.** The recorder binds loopback inside the service, and the frontend reaches it there.
 
 ## Volume and Data Layout
@@ -232,7 +234,7 @@ architectures:
   - aarch64
 subcontainers:
   - mosquitto-sub # the MQTT broker; also runs the setup-mosquitto oneshot
-  - recorder-sub # subscribes and stores tracks
+  - recorder-sub # subscribes and stores tracks; also runs the setup-recorder oneshot
   - frontend-sub # the web map, proxies the recorder
 volumes:
   main: its mosquitto/ at /mosquitto/data, its recorder/ at /store; store.json host side
