@@ -110,7 +110,7 @@ The address deliberately carries no `admin@` prefix. Folding the username into t
 Install generates the recorder's internal broker credential and raises two tasks. **The service does not usefully start until the first one is done.**
 
 1. **Set Admin Web Map Password** (`critical`). Until it is set, the basic-auth gate falls back to an empty password and the map is locked. This task is checked on every start, not just at install.
-2. **Add MQTT User** (`important`), once per person or device that will be tracked. Each gets a generated password, shown once.
+2. **Add MQTT User** (`important`), once per person or device that will be tracked. Each gets a generated password.
 
 Then configure each OwnTracks app with the MQTT address, that user's username and password, and — if people should see each other on their phones — grant the friendships.
 
@@ -125,7 +125,7 @@ Creates an account for a person or a device.
 - **What it changes:** a new entry in `users`; through it the broker's password file and ACL on the next start.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** each run adds one user. The name is validated, and `recorder` is reserved — that account is the recorder's own.
-- **Outputs:** the username and generated password, shown once.
+- **Outputs:** the username and generated password. User Credentials shows them again later.
 
 ### User Credentials
 
@@ -148,7 +148,7 @@ For each user, chooses which other users their phone app can see.
 Generates a new password for an existing account.
 
 - **Cost:** seconds, then a restart.
-- **Repeat safety:** safe to re-run.
+- **Repeat safety:** safe to re-run. No user is preselected.
 - **That user's apps stop working until updated.** They are disconnected the moment the broker restarts with the new password.
 
 ### Remove MQTT User
@@ -157,6 +157,7 @@ Deletes an account.
 
 - **What it changes:** removes the user from `users` **and from every other user's friends list**, so no dangling grant is left behind.
 - **Cost:** seconds, then a restart.
+- **No user is preselected**; the picker starts empty.
 - **Their recorded history is not deleted** — use Forget Device Tracks for that.
 
 ### Set Admin Web Map Password
@@ -165,7 +166,7 @@ Generates a new admin password for the web map.
 
 - **What it changes:** `uiPassword`; through it the basic-auth credential on the interface.
 - **Cost:** seconds, then a restart.
-- **Repeat safety:** safe to re-run; each run generates a fresh password and invalidates the old one.
+- **Repeat safety:** safe to re-run; each run generates a fresh password and invalidates the old one. Once a password exists, it asks for confirmation before replacing it.
 
 ### Forget Device Tracks
 
@@ -174,6 +175,7 @@ Wipes one device's location history and its last-known position from the map.
 - **What it changes:** the recorder's store, for one user-and-device pair.
 - **Cost:** seconds.
 - **This is not reversible.** The history is gone from the map and from disk; only a backup has it.
+- **No device is preselected**; the picker starts empty.
 - **It is per device, not per user.** A person tracking from two phones has two device histories.
 
 ## Tasks

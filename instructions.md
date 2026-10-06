@@ -22,7 +22,7 @@ After install, you'll be prompted to run the required **Set Admin Web Map Passwo
 
 Then create one MQTT account per person (or device) and point each phone at the server.
 
-1. Open the **Add MQTT User** action. Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown once — copy it.
+1. Open the **Add MQTT User** action. Enter a short lowercase **username** (e.g. `jane`). A password is generated and shown — copy it. **User Credentials** shows it again later.
 2. Repeat **Add MQTT User** for each person or device.
 3. Find your MQTT address: open the **Dashboard** tab and look at the **MQTT** interface. Connections use **TLS on port 8883**. A LAN IP or `.local` hostname works at home; for use on the road, expose the interface on a public domain — e.g. via **StartTunnel** — which provisions a publicly-trusted Let's Encrypt cert.
 
@@ -66,7 +66,7 @@ The **Admin Web Map** interface shows **every device** on the server on one map 
 
 1. Run the **Set Admin Web Map Password** action (a required task before the service starts). It generates the password and shows it once — copy it. The username is always `admin`, and these credentials are **separate** from the MQTT accounts.
 2. Open the **Admin Web Map** interface from the **Dashboard** tab and sign in with those credentials.
-3. Re-run **Set Admin Web Map Password** any time to rotate it (you'll need to sign in again).
+3. Re-run **Set Admin Web Map Password** any time to rotate it. It asks you to confirm, since the old password stops working, and you'll need to sign in again.
 
 Because it exposes everyone's location, treat the admin password as owner-only and don't share it with household members — give them MQTT accounts instead, and use Friends to control what they see in their apps.
 

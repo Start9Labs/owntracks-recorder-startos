@@ -7,12 +7,16 @@ import { credentialsResult } from './common'
 export const setWebUiPassword = sdk.Action.withoutInput(
   'set-web-ui-password',
 
-  async () => ({
+  async ({ effects }) => ({
     name: i18n('Set Admin Web Map Password'),
     description: i18n(
       'Generate a new admin password for the web map. The username is always "admin".',
     ),
-    warning: null,
+    warning: (await storeJson.read((s) => s.uiPassword).const(effects))
+      ? i18n(
+          'This replaces the current admin web map password. The old password stops working.',
+        )
+      : null,
     allowedStatuses: 'any',
     group: null,
     visibility: 'enabled',

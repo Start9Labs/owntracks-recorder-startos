@@ -1,12 +1,12 @@
 import { FileHelper, z } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 
-const userSchema = z.object({
+const userSchema = z.looseObject({
   password: z.string(),
   friends: z.array(z.string()).catch([]),
 })
 
-const shape = z.object({
+const shape = z.looseObject({
   recorderPassword: z.string().catch(''),
   uiPassword: z.string().catch(''),
   users: z.record(z.string(), userSchema).catch({}),

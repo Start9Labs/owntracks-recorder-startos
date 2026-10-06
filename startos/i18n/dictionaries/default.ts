@@ -22,23 +22,21 @@ const dict = {
 
   // addUser
   'Add MQTT User': 13,
-  'Create a new MQTT account for a person or device. A random password is generated and shown once.': 14,
+  'Create a new MQTT account for a person or device. A random password is generated for it; User Credentials shows it again later.': 14,
   'A short, lowercase name for the person or device (letters, numbers, - and _).': 15,
 
   // removeUser
   'Remove MQTT User': 16,
   'Delete an MQTT account. The user can no longer connect and is removed from all friends lists.': 17,
-  'The user account to remove.': 18,
+  'Their recorded location history is kept. Use Forget Device Tracks to delete it.': 18,
 
   // userCredentials
   'User Credentials': 19,
   'Show the username and password for an existing MQTT account.': 20,
-  'The user account to show.': 21,
 
   // resetUserPassword
   'Reset User Password': 22,
   'Generate a new random password for an existing MQTT account. The user must update their app afterward.': 23,
-  'The user account to reset.': 24,
   'Existing apps for this user will be disconnected until updated with the new password.': 25,
 
   // manageFriends
@@ -75,6 +73,7 @@ const dict = {
   'Tracks Deleted': 46,
   'Removed the recorder history and cleared the broker retention for this device. Other phones may need to force-stop and reopen the OwnTracks app for the marker to disappear.': 47,
   'Device ID': 48,
+  'This replaces the current admin web map password. The old password stops working.': 49,
 } as const
 
 /**
