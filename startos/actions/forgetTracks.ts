@@ -116,7 +116,7 @@ export const forgetTracks = sdk.Action.withInput(
           'User and device-id pair to forget. Both the last-known location and the full history are removed.',
         ),
         values,
-        default: pairs[0] ? `${pairs[0].user}/${pairs[0].device}` : '',
+        default: null,
         warning: i18n(
           'This deletes all tracks for the selected device. Irreversible.',
         ),

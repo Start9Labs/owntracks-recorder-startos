@@ -32,8 +32,10 @@ export const removeUser = sdk.Action.withInput(
     return InputSpec.of({
       user: Value.select({
         name: i18n('User'),
-        description: i18n('The user account to remove.'),
-        default: names[0] ?? '',
+        description: i18n(
+          'Their recorded location history is kept. Use Forget Device Tracks to delete it.',
+        ),
+        default: null,
         values,
       }),
     })

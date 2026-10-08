@@ -18,16 +18,23 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **`store.json`'s `users` map is the source of truth for broker access.** Mosquitto's password file and ACL are rebuilt from it on every start, so a change is a write there plus a restart — never an edit to a broker file, which is regenerated into the container rootfs and cannot persist.
 - **Don't set `username` on the web-map interface.** The SDK folds it into the address as `admin@<host>`, and Chromium-based browsers strip or refuse userinfo in a top-level navigation, breaking the launch link. The `addSsl.auth` gate still prompts for it.
 - **MQTT passwords are stored recoverably on purpose** — the password file has to be rebuildable from them, and User Credentials re-shows them. Don't "improve" this to a hash.
-- **Removing a user must also strip them from every other user's friends list**, or the ACL generator emits a grant for an account that no longer exists.
+- **Removing a user must also strip them from every other user's friends list**, or a new account later created under that name inherits the old grants.
 - **The recorder's HTTP port binds loopback and is not published.** Only the frontend reaches it; exposing it would bypass the basic-auth gate entirely.

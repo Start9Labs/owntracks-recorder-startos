@@ -31,7 +31,7 @@ export const addUser = sdk.Action.withInput(
   async () => ({
     name: i18n('Add MQTT User'),
     description: i18n(
-      'Create a new MQTT account for a person or device. A random password is generated and shown once.',
+      'Create a new MQTT account for a person or device. A random password is generated for it; User Credentials shows it again later.',
     ),
     warning: null,
     allowedStatuses: 'any',
