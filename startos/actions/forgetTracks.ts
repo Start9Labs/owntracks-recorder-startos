@@ -211,6 +211,7 @@ export const forgetTracks = sdk.Action.withInput(
             masked: false,
             copyable: false,
             qr: false,
+            launchable: false,
           },
           {
             type: 'single' as const,
@@ -220,6 +221,7 @@ export const forgetTracks = sdk.Action.withInput(
             masked: false,
             copyable: false,
             qr: false,
+            launchable: false,
           },
         ],
       },

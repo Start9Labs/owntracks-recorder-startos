@@ -21,6 +21,7 @@ export function credentialsResult(
           masked: false,
           copyable: true,
           qr: false,
+          launchable: false,
         },
         {
           type: 'single' as const,
@@ -30,6 +31,7 @@ export function credentialsResult(
           masked: true,
           copyable: true,
           qr: false,
+          launchable: false,
         },
       ],
     },
