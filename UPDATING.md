@@ -24,4 +24,3 @@ Confirm each tag is published and multi-arch (x86_64 + aarch64) before pinning i
 
 1. Update the relevant `dockerTag`(s) in `startos/manifest/index.ts`.
 2. If the Recorder version changed, update `version` in `startos/versions/current.ts` (format `<recorder-version>:<packaging-revision>`).
-3. Update `releaseNotes`, then `make` to verify the build.
