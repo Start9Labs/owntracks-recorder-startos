@@ -10,7 +10,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
   const uiMultiOrigin = await uiMulti.bindPort(uiPort, {
     protocol: 'http',
-    addSsl: {
+    proxy: {
       auth: {
         type: 'basic',
         credentials: [{ username: uiUsername, password: uiPassword }],
@@ -30,7 +30,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     // Do NOT set `username` here. The SDK would fold it into the address as
     // `admin@<host>`, and Chromium-based browsers strip/refuse userinfo in
     // top-level navigations — so the launch link breaks. The basic-auth gate
-    // (addSsl.auth above) still prompts for the username; it's always 'admin'.
+    // (proxy.auth above) still prompts for the username; it's always 'admin'.
     username: null,
     path: '',
     query: {},
@@ -43,10 +43,9 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     preferredExternalPort: mqttPort,
     addSsl: {
       preferredExternalPort: mqttsPort,
-      addXForwardedHeaders: false,
       alpn: null,
-      auth: null,
     },
+    proxy: null,
     secure: null,
   })
   const mqtt = sdk.createInterface(effects, {
