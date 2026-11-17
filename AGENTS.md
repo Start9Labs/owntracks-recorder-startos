@@ -34,7 +34,7 @@ verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **Don't set `username` on the web-map interface.** The SDK folds it into the address as `admin@<host>`, and Chromium-based browsers strip or refuse userinfo in a top-level navigation, breaking the launch link. The `addSsl.auth` gate still prompts for it.
+- **Don't set `username` on the web-map interface.** The SDK folds it into the address as `admin@<host>`, and Chromium-based browsers strip or refuse userinfo in a top-level navigation, breaking the launch link. The `proxy.auth` gate still prompts for it.
 - **MQTT passwords are stored recoverably on purpose** — the password file has to be rebuildable from them, and User Credentials re-shows them. Don't "improve" this to a hash.
 - **Removing a user must also strip them from every other user's friends list**, or a new account later created under that name inherits the old grants.
 - **The recorder's HTTP port binds loopback and is not published.** Only the frontend reaches it; exposing it would bypass the basic-auth gate entirely.
