@@ -13,11 +13,11 @@ export const manifest = setupManifest({
   volumes: ['main'],
   images: {
     mosquitto: {
-      source: { dockerTag: 'eclipse-mosquitto:2.0.22' },
+      source: { dockerTag: 'eclipse-mosquitto:2.0.23' },
       arch: ['x86_64', 'aarch64'],
     },
     recorder: {
-      source: { dockerTag: 'owntracks/recorder:1.0.5' },
+      source: { dockerTag: 'owntracks/recorder:1.0.6' },
       arch: ['x86_64', 'aarch64'],
     },
     frontend: {
