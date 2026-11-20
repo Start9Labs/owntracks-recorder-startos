@@ -38,3 +38,4 @@ verified, tried, and decided belongs in the commit message and the PR body.
 - **MQTT passwords are stored recoverably on purpose** — the password file has to be rebuildable from them, and User Credentials re-shows them. Don't "improve" this to a hash.
 - **Removing a user must also strip them from every other user's friends list**, or a new account later created under that name inherits the old grants.
 - **The recorder's HTTP port binds loopback and is not published.** Only the frontend reaches it; exposing it would bypass the basic-auth gate entirely.
+- **Don't make the recorder's MQTT client ID a constant.** Mosquitto hands a connected client ID to any authenticated client that asks for it, so any MQTT user could knock the recorder off the broker.

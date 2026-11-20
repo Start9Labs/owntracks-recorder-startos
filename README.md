@@ -50,6 +50,8 @@ Three upstream images, unmodified, run as three daemons in a fixed chain.
 
 **Mosquitto's configuration is generated, not stored.** The broker's `mosquitto.conf` and its ACL file are written into the container's root filesystem on every start, derived from the users in the package's store — so they cannot drift, and they cannot be edited to outlive a restart.
 
+**The broker discards the session of any client offline for a week.** The recorder connects under a stable client ID derived from its broker password, `ot-recorder-` plus 16 hex characters, so its own session, and anything published while it was down, survives a restart.
+
 A oneshot, `setup-mosquitto`, then builds the hashed password file from those same users before the broker starts, and locks both files down to the broker's own uid.
 
 A second oneshot, `setup-recorder`, creates `/store/rec` and `/store/last` before the recorder starts, so the web map's listings succeed before the first location has been stored.
@@ -247,6 +249,7 @@ startos_managed_env_vars:
   - OTR_PORT # recorder-sub
   - OTR_USER # recorder-sub
   - OTR_PASS # recorder-sub
+  - OTR_CLIENTID # recorder-sub
   - LISTEN_PORT # frontend-sub
   - SERVER_HOST # frontend-sub
   - SERVER_PORT # frontend-sub
