@@ -1,18 +1,18 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '1.0.7:0',
+  version: '1.0.7:1',
   releaseNotes: {
     en_US:
-      'Updated OwnTracks Recorder to 1.0.7, a security release. It fixes a flaw that let a remote request crash the Recorder and one that could leak memory contents through the location-blocking endpoint. Support for obsolete Greenwich devices is removed. Full notes: https://github.com/owntracks/recorder/releases/tag/1.0.7',
+      'The MQTT broker now clears out sessions left behind by earlier restarts of the service, and those of devices offline for more than a week.',
     es_ES:
-      'Actualizado OwnTracks Recorder a 1.0.7, una versión de seguridad. Corrige un fallo que permitía a una solicitud remota bloquear el Recorder y otro que podía filtrar contenido de memoria a través del endpoint de bloqueo de ubicaciones. Se elimina la compatibilidad con los dispositivos obsoletos Greenwich. Notas completas: https://github.com/owntracks/recorder/releases/tag/1.0.7',
+      'El broker MQTT ahora elimina las sesiones que dejaron los reinicios anteriores del servicio y las de los dispositivos desconectados durante más de una semana.',
     de_DE:
-      'OwnTracks Recorder auf 1.0.7 aktualisiert, ein Sicherheitsrelease. Es behebt eine Schwachstelle, durch die eine entfernte Anfrage den Recorder zum Absturz bringen konnte, sowie eine, über die der Endpunkt zum Sperren von Standorten Speicherinhalte preisgeben konnte. Die Unterstützung veralteter Greenwich-Geräte entfällt. Vollständige Hinweise: https://github.com/owntracks/recorder/releases/tag/1.0.7',
+      'Der MQTT-Broker entfernt jetzt Sitzungen, die frühere Neustarts des Dienstes hinterlassen haben, sowie die von Geräten, die länger als eine Woche offline sind.',
     pl_PL:
-      'Zaktualizowano OwnTracks Recorder do wersji 1.0.7 z poprawkami bezpieczeństwa. Naprawia błąd, przez który zdalne żądanie mogło spowodować awarię Recordera, oraz błąd, przez który punkt końcowy blokowania lokalizacji mógł ujawniać zawartość pamięci. Usunięto obsługę przestarzałych urządzeń Greenwich. Pełne informacje: https://github.com/owntracks/recorder/releases/tag/1.0.7',
+      'Broker MQTT usuwa teraz sesje pozostawione przez wcześniejsze restarty usługi oraz sesje urządzeń, które są offline dłużej niż tydzień.',
     fr_FR:
-      "Mise à jour d'OwnTracks Recorder vers 1.0.7, une version de sécurité. Elle corrige une faille permettant à une requête distante de faire planter le Recorder, ainsi qu'une autre pouvant divulguer le contenu de la mémoire via le point de terminaison de blocage des positions. La prise en charge des appareils Greenwich obsolètes est supprimée. Notes complètes : https://github.com/owntracks/recorder/releases/tag/1.0.7",
+      "Le broker MQTT supprime désormais les sessions laissées par les redémarrages précédents du service, ainsi que celles des appareils hors ligne depuis plus d'une semaine.",
   },
   migrations: {
     up: async ({ effects }) => {},

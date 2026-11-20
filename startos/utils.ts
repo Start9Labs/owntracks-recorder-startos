@@ -36,6 +36,7 @@ password_file ${mosquittoPasswdFile}
 acl_file ${mosquittoAclFile}
 persistence true
 persistence_location ${mosquittoDataDir}/
+persistent_client_expiration 1w
 log_dest stdout
 `
 }

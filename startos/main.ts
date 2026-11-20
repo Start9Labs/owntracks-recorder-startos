@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
 import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
@@ -108,6 +109,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
           OTR_PORT: `${mqttPort}`,
           OTR_USER: recorderMqttUsername,
           OTR_PASS: recorderPassword,
+          OTR_CLIENTID: `ot-recorder-${createHash('sha256').update(recorderPassword).digest('hex').slice(0, 16)}`,
         },
       },
       ready: {
